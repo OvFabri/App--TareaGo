@@ -1,110 +1,57 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-// Screens
-import HomeScreen from './screens/HomeScreen';
-import CameraScreen from './screens/CameraScreen';
+import HomeScreen    from './screens/HomeScreen';
+import CameraScreen  from './screens/CameraScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import { TaskProvider, useTasks } from './context/TaskContext';
 
 const Tab = createBottomTabNavigator();
 
-// Colores de la app
-const COLORS = {
-  primary: '#1D9E75',
-  background: '#FFFFFF',
-  tabBar: '#FFFFFF',
-  inactive: '#9E9E9E',
-  border: '#F0F0F0',
-};
+function Tabs() {
+  const { darkMode } = useTasks();
 
-export default function App() {
+  const LIGHT = { primary:'#1D9E75', bg:'#FFFFFF', tabBar:'#FFFFFF', inactive:'#9E9E9E', border:'#F0F0F0', text:'#1A1A1A' };
+  const DARK  = { primary:'#1D9E75', bg:'#111111', tabBar:'#1A1A1A', inactive:'#555',    border:'#2A2A2A', text:'#FFFFFF' };
+  const C = darkMode ? DARK : LIGHT;
+
   return (
-    <NavigationContainer>
-      <StatusBar style="dark" />
+    <>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          // Icono de cada pestaña
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'Inicio') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Cámara') {
-              iconName = focused ? 'camera' : 'camera-outline';
-            } else if (route.name === 'Perfil') {
-              iconName = focused ? 'person' : 'person-outline';
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} />;
+            let icon;
+            if (route.name === 'Inicio') icon = focused ? 'home'   : 'home-outline';
+            if (route.name === 'Cámara') icon = focused ? 'camera' : 'camera-outline';
+            if (route.name === 'Perfil') icon = focused ? 'person' : 'person-outline';
+            return <Ionicons name={icon} size={size} color={color} />;
           },
-
-          // Estilos de la barra de navegación
-          tabBarActiveTintColor: COLORS.primary,
-          tabBarInactiveTintColor: COLORS.inactive,
-          tabBarStyle: {
-            backgroundColor: COLORS.tabBar,
-            borderTopColor: COLORS.border,
-            borderTopWidth: 1,
-            height: 60,
-            paddingBottom: 8,
-            paddingTop: 6,
-          },
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: '600',
-          },
-
-          // Estilos del header de cada pantalla
-          headerStyle: {
-            backgroundColor: COLORS.background,
-            shadowColor: 'transparent',  // iOS
-            elevation: 0,               // Android
-            borderBottomWidth: 1,
-            borderBottomColor: COLORS.border,
-          },
-          headerTitleStyle: {
-            fontSize: 20,
-            fontWeight: '700',
-            color: '#1A1A1A',
-          },
-          headerTintColor: COLORS.primary,
+          tabBarActiveTintColor:   C.primary,
+          tabBarInactiveTintColor: C.inactive,
+          tabBarStyle: { backgroundColor: C.tabBar, borderTopColor: C.border, borderTopWidth: 1, height: 60, paddingBottom: 8, paddingTop: 6 },
+          tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+          headerStyle: { backgroundColor: C.bg, shadowColor: 'transparent', elevation: 0, borderBottomWidth: 1, borderBottomColor: C.border },
+          headerTitleStyle: { fontSize: 20, fontWeight: '700', color: C.text },
+          headerTintColor: C.primary,
         })}
       >
-        <Tab.Screen
-          name="Inicio"
-          component={HomeScreen}
-          options={{
-            title: 'TareaGo',
-            headerTitle: 'TareaGo ✓',
-          }}
-        />
-        <Tab.Screen
-          name="Cámara"
-          component={CameraScreen}
-          options={{
-            title: 'Cámara',
-            headerTitle: 'Tomar Evidencia',
-          }}
-        />
-        <Tab.Screen
-          name="Perfil"
-          component={ProfileScreen}
-          options={{
-            title: 'Perfil',
-            headerTitle: 'Mi Perfil',
-          }}
-        />
+        <Tab.Screen name="Inicio" component={HomeScreen} options={{ headerTitle: 'TareaGo ✓' }} />
+        <Tab.Screen name="Cámara" component={CameraScreen} options={{ headerTitle: 'Tomar Evidencia' }} />
+        <Tab.Screen name="Perfil" component={ProfileScreen} options={{ headerTitle: 'Mi Perfil' }} />
       </Tab.Navigator>
-    </NavigationContainer>
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
+export default function App() {
+  return (
+    <TaskProvider>
+      <NavigationContainer>
+        <Tabs />
+      </NavigationContainer>
+    </TaskProvider>
+  );
+}
