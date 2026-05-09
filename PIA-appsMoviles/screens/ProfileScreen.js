@@ -6,6 +6,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { signOut } from 'firebase/auth';
+import { auth } from '../src/firebase/config';
 import { useTasks } from '../context/TaskContext';
 
 export default function ProfileScreen() {
@@ -65,6 +67,18 @@ export default function ProfileScreen() {
   };
 
   // ── Guardar perfil
+  // ── Cerrar sesión
+  const handleLogout = () => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Seguro que quieres salir?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Cerrar sesión', style: 'destructive', onPress: () => signOut(auth) },
+      ]
+    );
+  };
+
   const saveProfile = () => {
     updateProfile({ nombre: tempNombre.trim(), apellido: tempApellido.trim() });
     setEditModal(false);
@@ -168,6 +182,16 @@ export default function ProfileScreen() {
           ))}
         </View>
 
+        {/* ── Botón cerrar sesión ── */}
+        <TouchableOpacity
+          style={[styles.btnLogout, { borderColor: '#E24B4A' }]}
+          onPress={handleLogout}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="log-out-outline" size={18} color="#E24B4A" />
+          <Text style={styles.btnLogoutText}>Cerrar sesión</Text>
+        </TouchableOpacity>
+
       </ScrollView>
 
       {/* ── Modal editar perfil ── */}
@@ -263,4 +287,6 @@ const styles = StyleSheet.create({
   btnCancelText:{ fontSize: 14, fontWeight: '600' },
   btnSave:      { flex: 2, paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
   btnSaveText:  { fontSize: 14, fontWeight: '700', color: '#fff' },
+  btnLogout:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12, borderWidth: 1.5, backgroundColor: '#FCEBEB' },
+  btnLogoutText: { fontSize: 14, fontWeight: '700', color: '#E24B4A' },
 });

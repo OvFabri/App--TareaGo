@@ -71,7 +71,7 @@ export default function HomeScreen() {
       <View style={[styles.card, { backgroundColor: C.card, borderColor: C.border }, isDone && { opacity: 0.65 }]}>
         <TouchableOpacity
           style={[styles.checkCircle, { borderColor: C.border }, isDone && { backgroundColor: C.primary, borderColor: C.primary }]}
-          onPress={() => toggleTask(item.id)}
+          onPress={() => toggleTask(item.id, item.status)}
           activeOpacity={0.7}
         >
           {isDone && <Ionicons name="checkmark" size={14} color="#fff" />}
